@@ -1,0 +1,19 @@
+<resources>
+  <string name="app_name">TheMovie</string>
+
+  <!--region : Network error-->
+
+  <string name="error_generic">Something went wrong.Try again later.</string>
+  <string name="error_no_internet">No internet connection.</string>
+  <string name="error_socket_timeout">Connection timeout.</string>
+  <string name="error_server_500">Server error occurs.Try again later.</string>
+  <string name="error_server_404">Server not found.</string>
+  <string name="error_http">Server error occurs.Try again later.</string>
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="lbl_menu_favorite">Favorite Movie</string>
+  <string name="lbl_upcoming_movie">Upcoming Movie</string>
+  <string name="lbl_popular_movie">Popular Movie</string>
+  <string name="summary">Summary</string>
+
+  <!--endregion -->
+</resources>

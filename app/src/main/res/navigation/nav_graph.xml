@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/movieFragment">
+
+  <fragment
+      android:id="@+id/movieFragment"
+      android:name="co.zmt.themovie.view.MovieFragment"
+      android:label="The Movie"
+      tools:layout="@layout/fragment_movie">
+    <action
+        android:id="@+id/action_movieFragment_to_upcomingMovieFragment"
+        app:destination="@id/upcomingMovieFragment" />
+    <action
+        android:id="@+id/action_movieFragment_to_popularMovieFragment"
+        app:destination="@id/popularMovieFragment" />
+    <action
+        android:id="@+id/action_movieFragment_to_favoriteMovieFragment"
+        app:destination="@id/favoriteMovieFragment" />
+    <action
+        android:id="@+id/action_movieFragment_to_movieDetailFragment"
+        app:destination="@id/movieDetailFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim" />
+  </fragment>
+  <fragment
+      android:id="@+id/upcomingMovieFragment"
+      android:name="co.zmt.themovie.view.UpcomingMovieFragment"
+      android:label=""
+      tools:layout="@layout/fragment_upcoming_movie"/>
+  <fragment
+      android:id="@+id/popularMovieFragment"
+      android:name="co.zmt.themovie.view.PopularMovieFragment"
+      android:label=""
+      tools:layout="@layout/fragment_popular_movie"/>
+  <fragment
+      android:id="@+id/favoriteMovieFragment"
+      android:name="co.zmt.themovie.view.FavoriteMovieFragment"
+      android:label="Favorite Movie"
+      tools:layout="@layout/fragment_favorite_movie" />
+  <fragment
+      android:id="@+id/movieDetailFragment"
+      android:name="co.zmt.themovie.view.MovieDetailFragment"
+      android:label="Movie Detail">
+    <argument
+        android:name="movie_id"
+        app:argType="integer" />
+  </fragment>
+</navigation>
