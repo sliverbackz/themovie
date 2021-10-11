@@ -14,4 +14,5 @@ class FavoriteMovieViewModel @Inject constructor(
 ) : ViewModel() {
     val favoriteMovieLiveData: LiveData<List<LikedMovie>?> =
         movieRepository.getLikedMovieFlow().asLiveData()
+
 }

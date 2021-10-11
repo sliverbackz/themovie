@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -27,7 +28,9 @@ class FavoriteMovieFragment : Fragment() {
         LikedMovieAdapter(object : LikedMovieItemClickEvent {
             override fun itemClick(item: LikedMovie) {
                 val action =
-                    FavoriteMovieFragmentDirections.actionFavoriteMovieFragmentToMovieDetailFragment(item.movie.movieId)
+                    FavoriteMovieFragmentDirections.actionFavoriteMovieFragmentToMovieDetailFragment(
+                        item.movie.movieId
+                    )
                 findNavController().navigate(action)
             }
         })
@@ -45,7 +48,15 @@ class FavoriteMovieFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.rvMovie.adapter = movieAdapter
         viewModel.favoriteMovieLiveData.observe(viewLifecycleOwner) {
-            it?.apply { movieAdapter.submitList(this) }
+            if (it.isNullOrEmpty()) {
+                binding.emptyView.tvEmptyText.isVisible = true
+                binding.rvMovie.isVisible = false
+                binding.emptyView.tvEmptyText.text = "No favorite movie yet!"
+            } else {
+                binding.emptyView.tvEmptyText.isVisible = false
+                binding.rvMovie.isVisible = true
+                movieAdapter.submitList(it)
+            }
         }
     }
 
