@@ -57,7 +57,8 @@ class UpcomingMovieFragment : Fragment() {
         binding.rvMovie.adapter = movieAdapter
         viewModel.movieLiveData.observe(viewLifecycleOwner) {
             it?.apply {
-                binding.rvMovie.isVisible = false
+                binding.rvMovie.isVisible = true
+                binding.emptyView.tvEmptyText.isVisible = false
                 movieAdapter.submitList(this)
             }
         }
