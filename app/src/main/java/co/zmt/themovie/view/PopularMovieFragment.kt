@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -60,17 +61,24 @@ class PopularMovieFragment : Fragment() {
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
             snackbar = when (it) {
                 is AsyncViewResource.Error -> {
-                    Snackbar.make(binding.rvMovie, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
+                    binding.rvMovie.isVisible = false
+                    binding.emptyView.tvEmptyText.isVisible = true
+                    binding.emptyView.tvEmptyText.text = "Empty Movie"
+                    Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.lbl_load_again) {
                             viewModel.getPopularMovies()
                         }
                 }
                 is AsyncViewResource.Success -> {
-                    Snackbar.make(binding.rvMovie, "Successful loaded", Snackbar.LENGTH_SHORT)
-
+                    binding.rvMovie.isVisible = false
+                    binding.emptyView.tvEmptyText.isVisible = false
+                    Snackbar.make(binding.root, "Successful loaded", Snackbar.LENGTH_SHORT)
                 }
                 else -> {
-                    Snackbar.make(binding.rvMovie, "Loading..", Snackbar.LENGTH_SHORT)
+                    binding.rvMovie.isVisible = false
+                    binding.emptyView.tvEmptyText.isVisible = true
+                    binding.emptyView.tvEmptyText.text = "Loading.."
+                    Snackbar.make(binding.root, "Loading..", Snackbar.LENGTH_SHORT)
                 }
             }
             snackbar.show()

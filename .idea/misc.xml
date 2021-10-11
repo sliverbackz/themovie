@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/placeholder.xml" value="0.13055555555555556" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.19635416666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18229166666666666" />
+        <entry key="app/src/main/res/layout/empty_view.xml" value="0.19635416666666666" />
         <entry key="app/src/main/res/layout/fragment_favorite_movie.xml" value="0.19635416666666666" />
         <entry key="app/src/main/res/layout/fragment_movie.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_movie_detail.xml" value="0.19635416666666666" />
