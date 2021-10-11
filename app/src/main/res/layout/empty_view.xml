@@ -5,8 +5,8 @@
     >
 
   <TextView
-      style="@style/TextAppearance.MaterialComponents.Body1"
       android:id="@+id/tv_empty_text"
+      style="@style/TextAppearance.MaterialComponents.Body1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_centerInParent="true"
