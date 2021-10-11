@@ -56,7 +56,10 @@ class PopularMovieFragment : Fragment() {
         viewModel.getPopularMovies()
         binding.rvMovie.adapter = movieAdapter
         viewModel.movieLiveData.observe(viewLifecycleOwner) {
-            it?.apply { movieAdapter.submitList(this) }
+            it?.apply {
+                binding.rvMovie.isVisible = false
+                movieAdapter.submitList(this)
+            }
         }
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
             snackbar = when (it) {
@@ -70,7 +73,7 @@ class PopularMovieFragment : Fragment() {
                         }
                 }
                 is AsyncViewResource.Success -> {
-                    binding.rvMovie.isVisible = false
+                    binding.rvMovie.isVisible = true
                     binding.emptyView.tvEmptyText.isVisible = false
                     Snackbar.make(binding.root, "Successful loaded", Snackbar.LENGTH_SHORT)
                 }

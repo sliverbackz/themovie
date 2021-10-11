@@ -56,7 +56,10 @@ class UpcomingMovieFragment : Fragment() {
         viewModel.getUpcomingMovies()
         binding.rvMovie.adapter = movieAdapter
         viewModel.movieLiveData.observe(viewLifecycleOwner) {
-            it?.apply { movieAdapter.submitList(this) }
+            it?.apply {
+                binding.rvMovie.isVisible = false
+                movieAdapter.submitList(this)
+            }
         }
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
             snackBar = when (it) {
