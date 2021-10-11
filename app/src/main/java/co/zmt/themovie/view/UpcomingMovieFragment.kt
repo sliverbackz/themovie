@@ -7,15 +7,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import co.zmt.themovie.R.string
 import co.zmt.themovie.databinding.FragmentUpcomingMovieBinding
+import co.zmt.themovie.helper.AsyncViewResource.Error
+import co.zmt.themovie.helper.AsyncViewResource.Success
 import co.zmt.themovie.model.local.db.movie.MovieWithMovieGenre
 import co.zmt.themovie.view.adapter.MovieAdapter
 import co.zmt.themovie.view.adapter.MovieItemClickEvent
 import co.zmt.themovie.viewmodel.UpcomingMovieViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class UpcomingMovieFragment : Fragment() {
+    private lateinit var snackBar: Snackbar
     private var _binding: FragmentUpcomingMovieBinding? = null
 
     private val binding: FragmentUpcomingMovieBinding
@@ -51,6 +56,24 @@ class UpcomingMovieFragment : Fragment() {
         binding.rvMovie.adapter = movieAdapter
         viewModel.movieLiveData.observe(viewLifecycleOwner) {
             it?.apply { movieAdapter.submitList(this) }
+        }
+        viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
+            snackBar = when (it) {
+                is Error -> {
+                    Snackbar.make(binding.rvMovie, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(string.lbl_load_again) {
+                            viewModel.getUpcomingMovies()
+                        }
+                }
+                is Success -> {
+                    Snackbar.make(binding.rvMovie, "Successful loaded", Snackbar.LENGTH_SHORT)
+
+                }
+                else -> {
+                    Snackbar.make(binding.rvMovie, "Loading..", Snackbar.LENGTH_SHORT)
+                }
+            }
+            snackBar.show()
         }
     }
 

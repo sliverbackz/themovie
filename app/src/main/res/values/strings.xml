@@ -14,6 +14,8 @@
   <string name="lbl_upcoming_movie">Upcoming Movie</string>
   <string name="lbl_popular_movie">Popular Movie</string>
   <string name="summary">Summary</string>
+  <string name="lbl_load_again">Load again</string>
+  <string name="lbl_cancel">Cancel</string>
 
   <!--endregion -->
 </resources>

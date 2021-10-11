@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
     private val movieRepository: MovieRepository
 ) : ViewModel() {
 
-    private val movieGenreStateLiveData = AsyncViewStateLiveData<Unit>()
+    private val movieGenreStateLiveData = AsyncViewStateLiveData<List<MovieGenre>?>()
 
     val movieGenreLiveData: LiveData<List<MovieGenre>> = movieRepository.getGenreListFlow().asLiveData()
 
@@ -29,13 +29,14 @@ class HomeViewModel @Inject constructor(
             val result = movieRepository.getGenreList()
             when (result) {
                 is AsyncResource.Error -> {
+                    movieGenreStateLiveData.postError(result.exception, result.errorMessage)
                     Timber.i(result.errorMessage)
                 }
                 is AsyncResource.Loading -> {
-                    Timber.i("Loading")
+                    movieGenreStateLiveData.postLoading()
                 }
                 is AsyncResource.Success -> {
-                    Timber.i(result.value?.size.toString())
+                    movieGenreStateLiveData.postSuccess(result.value)
                 }
             }
         }

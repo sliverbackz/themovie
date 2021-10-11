@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import co.zmt.themovie.R
 import co.zmt.themovie.databinding.FragmentPopularMovieBinding
+import co.zmt.themovie.helper.AsyncViewResource
 import co.zmt.themovie.model.local.db.movie.MovieWithMovieGenre
 import co.zmt.themovie.view.adapter.MovieAdapter
 import co.zmt.themovie.view.adapter.MovieItemClickEvent
 import co.zmt.themovie.viewmodel.PopularMovieViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,6 +25,8 @@ class PopularMovieFragment : Fragment() {
         get() = _binding!!
 
     private val viewModel: PopularMovieViewModel by viewModels()
+
+    private lateinit var snackbar: Snackbar
 
     companion object {
         fun newInstance() = PopularMovieFragment()
@@ -52,5 +57,24 @@ class PopularMovieFragment : Fragment() {
         viewModel.movieLiveData.observe(viewLifecycleOwner) {
             it?.apply { movieAdapter.submitList(this) }
         }
+        viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
+            snackbar = when (it) {
+                is AsyncViewResource.Error -> {
+                    Snackbar.make(binding.rvMovie, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.lbl_load_again) {
+                            viewModel.getPopularMovies()
+                        }
+                }
+                is AsyncViewResource.Success -> {
+                    Snackbar.make(binding.rvMovie, "Successful loaded", Snackbar.LENGTH_SHORT)
+
+                }
+                else -> {
+                    Snackbar.make(binding.rvMovie, "Loading..", Snackbar.LENGTH_SHORT)
+                }
+            }
+            snackbar.show()
+        }
+
     }
 }
