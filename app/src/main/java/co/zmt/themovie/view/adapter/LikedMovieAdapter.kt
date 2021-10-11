@@ -18,7 +18,7 @@ class LikedMovieAdapter(private val event: LikedMovieItemClickEvent) :
                 oldItem: LikedMovie,
                 newItem: LikedMovie
             ): Boolean {
-                return oldItem.movie.id == newItem.movie.id
+                return oldItem.movie.movieId == newItem.movie.movieId
             }
 
             override fun areContentsTheSame(

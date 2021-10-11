@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Movie(
     @PrimaryKey
-    val id: Int,
+    val movieId: Int,
     val adult: Boolean,
     val backdropPath: String,
     val originalLanguage: String,

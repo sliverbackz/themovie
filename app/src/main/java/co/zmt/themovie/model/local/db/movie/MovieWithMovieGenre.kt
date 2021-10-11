@@ -10,13 +10,13 @@ data class MovieWithMovieGenre(
     @Embedded
     val movie: Movie,
     @Relation(
-        parentColumn = "id",
+        parentColumn = "movieId",
         entityColumn = "movieId"
     )
     val genreIds: List<MovieGenreId>,
 
     @Relation(
-        parentColumn = "id",
+        parentColumn = "movieId",
         entityColumn = "movieId"
     )
     val favoriteMovie: FavoriteMovie?

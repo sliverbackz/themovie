@@ -39,7 +39,11 @@
       android:id="@+id/favoriteMovieFragment"
       android:name="co.zmt.themovie.view.FavoriteMovieFragment"
       android:label="Favorite Movie"
-      tools:layout="@layout/fragment_favorite_movie" />
+      tools:layout="@layout/fragment_favorite_movie" >
+    <action
+        android:id="@+id/action_favoriteMovieFragment_to_movieDetailFragment"
+        app:destination="@id/movieDetailFragment" />
+  </fragment>
   <fragment
       android:id="@+id/movieDetailFragment"
       android:name="co.zmt.themovie.view.MovieDetailFragment"

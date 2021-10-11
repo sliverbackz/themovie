@@ -36,7 +36,7 @@ class UpcomingMovieFragment : Fragment() {
         MovieAdapter(object : MovieItemClickEvent {
             override fun itemClick(item: MovieWithMovieGenre) {
                 val action =
-                    MovieFragmentDirections.actionMovieFragmentToMovieDetailFragment(item.movie.id)
+                    MovieFragmentDirections.actionMovieFragmentToMovieDetailFragment(item.movie.movieId)
                 findNavController().navigate(action)
             }
         })

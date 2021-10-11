@@ -7,7 +7,7 @@ import javax.inject.Inject
 class MovieEntityMapper @Inject constructor() : UnidirectionalMap<MovieNetworkData, Movie> {
     override fun map(item: MovieNetworkData): Movie {
         return Movie(
-            id = item.id,
+            movieId = item.id,
             adult = item.adult,
             backdropPath = item.backdropPath,
             originalLanguage = item.originalLanguage,

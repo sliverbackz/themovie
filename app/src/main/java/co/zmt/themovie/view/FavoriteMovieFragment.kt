@@ -27,7 +27,7 @@ class FavoriteMovieFragment : Fragment() {
         LikedMovieAdapter(object : LikedMovieItemClickEvent {
             override fun itemClick(item: LikedMovie) {
                 val action =
-                    MovieFragmentDirections.actionMovieFragmentToMovieDetailFragment(item.movie.id)
+                    FavoriteMovieFragmentDirections.actionFavoriteMovieFragmentToMovieDetailFragment(item.movie.movieId)
                 findNavController().navigate(action)
             }
         })

@@ -14,13 +14,13 @@ abstract class MovieDao : BaseDao<Movie> {
     @Query("select * from movie")
     abstract fun getAllMovie(): Flow<List<MovieWithMovieGenre>?>
 
-    @Query("select * from movie where id=:id")
+    @Query("select * from movie where movieId=:id")
     abstract fun getMovieByIdFlow(id: Int): Flow<MovieWithMovieGenre?>
 
-    @Query("select * from movie where id=:id")
+    @Query("select * from movie where movieId=:id")
     abstract suspend fun getMovieById(id: Int): MovieWithMovieGenre?
 
     @Transaction
-    @Query("select * from movie")
+    @Query("select * from favoritemovie where isFavorite=1")
     abstract fun getLikedMovies(): Flow<List<LikedMovie>?>
 }

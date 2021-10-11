@@ -22,7 +22,7 @@ class MovieDetailViewModel @Inject constructor(
     suspend fun insertFavoriteMovie(movie: MovieWithMovieGenre, isFav: Boolean) {
         movieRepository.insertFavoriteMovie(
             FavoriteMovie(
-                movieId = movie.movie.id,
+                movieId = movie.movie.movieId,
                 isFavorite = isFav
             )
         )

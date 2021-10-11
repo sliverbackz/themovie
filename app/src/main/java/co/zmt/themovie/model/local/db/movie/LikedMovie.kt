@@ -7,10 +7,10 @@ import co.zmt.themovie.model.local.db.movie.entity.Movie
 
 data class LikedMovie(
     @Embedded
-    val movie: Movie,
+    val favoriteMovie: FavoriteMovie,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "movieId"
+        parentColumn = "movieId",
+        entityColumn = "movieId",
     )
-    val favoriteMovie: FavoriteMovie?
+    val movie: Movie,
 )

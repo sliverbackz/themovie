@@ -59,7 +59,7 @@ class MovieDetailFragment : Fragment() {
             }
             binding.fabFav.setOnClickListener {
                 lifecycleScope.launch {
-                    val favMovie = viewModel.getFavoriteMovie(data?.movie!!.id)
+                    val favMovie = viewModel.getFavoriteMovie(data?.movie!!.movieId)
                     favMovie?.apply {
                         viewModel.insertFavoriteMovie(data,  !favMovie.isFavorite)
                     }
