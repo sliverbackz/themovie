@@ -27,7 +27,7 @@ class PopularMovieFragment : Fragment() {
 
     private val viewModel: PopularMovieViewModel by viewModels()
 
-    private lateinit var snackbar: Snackbar
+    private lateinit var snackBar: Snackbar
 
     companion object {
         fun newInstance() = PopularMovieFragment()
@@ -62,15 +62,20 @@ class PopularMovieFragment : Fragment() {
                 movieAdapter.submitList(this)
             }
         }
+
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
-            snackbar = when (it) {
+            snackBar = when (it) {
                 is AsyncViewResource.Error -> {
-                    binding.rvMovie.isVisible = false
-                    binding.emptyView.tvEmptyText.isVisible = true
+
+                    val show = movieAdapter.itemCount > 0
+                    binding.rvMovie.isVisible = show
+                    binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Empty Movie"
+
                     Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.lbl_load_again) {
                             viewModel.getPopularMovies()
+                            snackBar.dismiss()
                         }
                 }
                 is AsyncViewResource.Success -> {
@@ -79,13 +84,17 @@ class PopularMovieFragment : Fragment() {
                     Snackbar.make(binding.root, "Successful loaded", Snackbar.LENGTH_SHORT)
                 }
                 else -> {
-                    binding.rvMovie.isVisible = false
-                    binding.emptyView.tvEmptyText.isVisible = true
+                    val show = movieAdapter.itemCount > 0
+                    binding.rvMovie.isVisible = show
+                    binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Loading.."
                     Snackbar.make(binding.root, "Loading..", Snackbar.LENGTH_SHORT)
                 }
             }
-            snackbar.show()
+            snackBar.show()
+            if(movieAdapter.itemCount > 0){
+                snackBar.dismiss()
+            }
         }
 
     }

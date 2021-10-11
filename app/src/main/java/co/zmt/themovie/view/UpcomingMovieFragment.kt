@@ -65,8 +65,9 @@ class UpcomingMovieFragment : Fragment() {
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
             snackBar = when (it) {
                 is Error -> {
-                    binding.rvMovie.isVisible = false
-                    binding.emptyView.tvEmptyText.isVisible = true
+                    val show = movieAdapter.itemCount > 0
+                    binding.rvMovie.isVisible = show
+                    binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Empty Movie"
                     Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
                         .setAction(string.lbl_load_again) {
@@ -80,13 +81,17 @@ class UpcomingMovieFragment : Fragment() {
 
                 }
                 else -> {
-                    binding.rvMovie.isVisible = false
-                    binding.emptyView.tvEmptyText.isVisible = true
+                    val show = movieAdapter.itemCount > 0
+                    binding.rvMovie.isVisible = show
+                    binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Loading.."
                     Snackbar.make(binding.root, "Loading..", Snackbar.LENGTH_SHORT)
                 }
             }
             snackBar.show()
+            if(movieAdapter.itemCount > 0){
+                snackBar.dismiss()
+            }
         }
     }
 

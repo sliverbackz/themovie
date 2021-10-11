@@ -32,11 +32,14 @@ class PopularMovieViewModel @Inject constructor(
                 is AsyncResource.Error -> {
                     movieStateLiveData.postError(result.exception, result.errorMessage)
                     Timber.i(result.errorMessage)
+                    Timber.i("Error")
                 }
                 is AsyncResource.Loading -> {
                     movieStateLiveData.postLoading()
+                    Timber.i("Loading..")
                 }
                 is AsyncResource.Success -> {
+                    Timber.i("Success")
                     movieStateLiveData.postSuccess(result.value)
                 }
             }
