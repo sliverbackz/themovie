@@ -17,6 +17,7 @@
         <entry key="app/src/main/res/layout/item_movie.xml" value="0.19635416666666666" />
         <entry key="app/src/main/res/layout/item_movie_poster.xml" value="0.19635416666666666" />
         <entry key="app/src/main/res/layout/layout_movie_detail_header.xml" value="0.19635416666666666" />
+        <entry key="app/src/main/res/layout/loading_view.xml" value="0.15364583333333334" />
         <entry key="app/src/main/res/menu/menu_home.xml" value="0.19635416666666666" />
       </map>
     </option>

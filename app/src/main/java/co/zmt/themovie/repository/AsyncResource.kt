@@ -7,5 +7,5 @@ sealed class AsyncResource<out T> {
     data class Error<out T>(val exception: Throwable, val errorMessage: String) :
         AsyncResource<T>()
 
-    data class NoMoreContent<out T>(val message: String) : AsyncResource<T>()
+//    data class NoMoreContent<out T>(val message: String) : AsyncResource<T>()
 }
