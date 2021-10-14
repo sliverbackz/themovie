@@ -10,6 +10,8 @@ import co.zmt.themovie.model.remote.Resource
 import co.zmt.themovie.model.remote.datasource.MovieNetworkDataSource
 import co.zmt.themovie.repository.entitymapper.MovieEntityMapper
 import co.zmt.themovie.repository.entitymapper.MovieGenreEntityMapper
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -59,37 +61,39 @@ class MovieRepository @Inject constructor(
     suspend fun updateFavoriteMovie(favMovie: FavoriteMovie) =
         movieLocalDataSource.updateFavoriteMovie(favMovie)
 
-    suspend fun getUpcomingMovies(): AsyncResource<List<Movie>?> {
-        when (val response = movieNetworkDataSource.getUpcomingMovies()) {
-            is Resource.Success -> {
-                val mappedMovieData = response.data.results
-                    ?.map(movieEntityMapper::map)
-                    ?.apply { movieLocalDataSource.bulkMovieInsert(this) }
+    suspend fun fetchUpcomingMovie(): Flow<AsyncResource<List<Movie>?>> {
+        return movieNetworkDataSource.getUpcomingMoviesFlow().map {
+            when (it) {
+                is Resource.Success -> {
+                    val mappedMovieData = it.data.results
+                        ?.map(movieEntityMapper::map)
+                        ?.apply { movieLocalDataSource.bulkMovieInsert(this) }
+                    it.data.results?.forEach { data ->
+                        data.genreIds?.map { genre ->
+                            MovieGenreId(
+                                movieId = data.id,
+                                genreId = genre,
+                                genreName = movieLocalDataSource.getGenreNameById(genre)
+                            )
+                        }?.apply { movieLocalDataSource.bulkMovieGenreIdInsert(this) }
 
-                response.data.results?.forEach { data ->
-                    data.genreIds?.map {
-                        Timber.i("${data.id} =>$it")
-                        MovieGenreId(
-                            movieId = data.id,
-                            genreId = it,
-                            genreName = movieLocalDataSource.getGenreNameById(it)
-                        )
-                    }?.apply { movieLocalDataSource.bulkMovieGenreIdInsert(this) }
-
+                    }
+                    AsyncResource.Success(mappedMovieData)
                 }
-                return AsyncResource.Success(mappedMovieData)
+                is Resource.Error -> {
+                    AsyncResource.Error(it.throwable, it.message)
+                }
+
+                is Resource.Loading -> {
+                    AsyncResource.Loading()
+                }
             }
-            is Resource.Error -> {
-                return AsyncResource.Error(response.throwable, response.message)
-            }
-            is Resource.Loading -> {
-                return AsyncResource.Loading()
-            }
-            else -> return AsyncResource.Loading()
         }
     }
 
     fun getUpcomingMoviesFlow() = movieLocalDataSource.getMovieFlow()
+
+    fun getUpcomingMovies() = movieLocalDataSource.getMovies()
 
     fun getPopularMoviesFlow() = movieLocalDataSource.getMovieFlow()
 
