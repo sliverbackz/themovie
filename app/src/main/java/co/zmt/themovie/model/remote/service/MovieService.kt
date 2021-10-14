@@ -19,4 +19,5 @@ interface MovieService {
     @GET("3/genre/movie/list")
     suspend fun getMovieGenreList()
             : Response<MovieGenreResponse>
+
 }

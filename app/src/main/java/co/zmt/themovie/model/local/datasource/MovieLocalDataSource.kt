@@ -54,7 +54,11 @@ class MovieLocalDataSource @Inject constructor(
     }
 
     fun getMovieFlow(): Flow<List<MovieWithMovieGenre>?> {
-        return movieDao.getAllMovie()
+        return movieDao.getAllMoviesFlow()
+    }
+
+    fun getMovies(): List<MovieWithMovieGenre>?{
+        return movieDao.getAllMovies()
     }
 
     fun getLikedMovieFlow() = movieDao.getLikedMovies()

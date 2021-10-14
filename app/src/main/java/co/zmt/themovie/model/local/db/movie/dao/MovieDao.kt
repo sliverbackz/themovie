@@ -12,7 +12,11 @@ import kotlinx.coroutines.flow.Flow
 abstract class MovieDao : BaseDao<Movie> {
     @Transaction
     @Query("select * from movie")
-    abstract fun getAllMovie(): Flow<List<MovieWithMovieGenre>?>
+    abstract fun getAllMoviesFlow(): Flow<List<MovieWithMovieGenre>?>
+
+    @Transaction
+    @Query("select * from movie")
+    abstract fun getAllMovies(): List<MovieWithMovieGenre>?
 
     @Query("select * from movie where movieId=:id")
     abstract fun getMovieByIdFlow(id: Int): Flow<MovieWithMovieGenre?>
