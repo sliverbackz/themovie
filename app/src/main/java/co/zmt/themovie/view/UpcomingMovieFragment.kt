@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import co.zmt.themovie.R.string
 import co.zmt.themovie.databinding.FragmentUpcomingMovieBinding
@@ -18,6 +19,7 @@ import co.zmt.themovie.view.adapter.MovieItemClickEvent
 import co.zmt.themovie.viewmodel.UpcomingMovieViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UpcomingMovieFragment : Fragment() {
@@ -32,6 +34,7 @@ class UpcomingMovieFragment : Fragment() {
     companion object {
         fun newInstance() = UpcomingMovieFragment()
     }
+
 
     private val movieAdapter: MovieAdapter by lazy {
         MovieAdapter(object : MovieItemClickEvent {
@@ -53,7 +56,8 @@ class UpcomingMovieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getUpcomingMovies()
+        //viewModel.getUpcomingMovies()
+        viewModel.fetchUpcomingMovies()
         binding.rvMovie.adapter = movieAdapter
         viewModel.movieLiveData.observe(viewLifecycleOwner) {
             it?.apply {
@@ -69,14 +73,16 @@ class UpcomingMovieFragment : Fragment() {
                     binding.rvMovie.isVisible = show
                     binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Empty Movie"
+                    binding.loadingView.progressBar.isVisible = false
                     Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
                         .setAction(string.lbl_load_again) {
-                            viewModel.getUpcomingMovies()
+                            viewModel.fetchUpcomingMovies()
                         }
                 }
                 is Success -> {
                     binding.rvMovie.isVisible = true
                     binding.emptyView.tvEmptyText.isVisible = false
+                    binding.loadingView.progressBar.isVisible = false
                     Snackbar.make(binding.root, "Successful loaded", Snackbar.LENGTH_SHORT)
 
                 }
@@ -85,11 +91,12 @@ class UpcomingMovieFragment : Fragment() {
                     binding.rvMovie.isVisible = show
                     binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Loading.."
+                    binding.loadingView.progressBar.isVisible = !show
                     Snackbar.make(binding.root, "Loading..", Snackbar.LENGTH_SHORT)
                 }
             }
             snackBar.show()
-            if(movieAdapter.itemCount > 0){
+            if (movieAdapter.itemCount > 0) {
                 snackBar.dismiss()
             }
         }
