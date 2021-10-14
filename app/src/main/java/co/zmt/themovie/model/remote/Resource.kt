@@ -7,5 +7,8 @@ sealed class Resource<out T> {
     data class Error<out T>(val message: String, val throwable: Throwable, val data: T?) :
         Resource<T>()
 
-    data class Loading<out T>(val isLoading: Boolean) : Resource<T>()
+    data class Loading<out T>(val isLoading: Boolean = true) : Resource<T>()
+
+    data class Start<out T>(val checkLocalData: String = "ok") : Resource<T>()
+
 }

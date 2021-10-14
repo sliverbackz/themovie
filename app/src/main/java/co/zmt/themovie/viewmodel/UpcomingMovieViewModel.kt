@@ -5,10 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import co.zmt.themovie.helper.AsyncViewStateLiveData
+import co.zmt.themovie.helper.State
 import co.zmt.themovie.helper.UiState
 import co.zmt.themovie.model.local.db.movie.MovieWithMovieGenre
-import co.zmt.themovie.model.local.db.movie.entity.Movie
-import co.zmt.themovie.repository.AsyncResource
 import co.zmt.themovie.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +24,7 @@ class UpcomingMovieViewModel @Inject constructor(
     val movieLiveData: LiveData<List<MovieWithMovieGenre>?> =
         movieRepository.getUpcomingMoviesFlow().asLiveData()
 
-    val movieStateLiveData = AsyncViewStateLiveData<List<Movie>?>()
+    val movieStateLiveData = AsyncViewStateLiveData<List<MovieWithMovieGenre>?>()
     private var _movieUiStateFlow =
         MutableStateFlow<UiState<List<MovieWithMovieGenre>?>>(
             UiState.Success(
@@ -41,15 +40,19 @@ class UpcomingMovieViewModel @Inject constructor(
             movieRepository.fetchUpcomingMovie()
                 .collect {
                     when (it) {
-                        is AsyncResource.Error -> {
+                        is State.Start -> {
+                            //localdata
+                            movieStateLiveData.postSuccess(it.value)
+                        }
+                        is State.Error -> {
                             movieStateLiveData.postError(it.exception, it.errorMessage)
                             _movieUiStateFlow.value = UiState.Error(it.exception, it.errorMessage)
                         }
-                        is AsyncResource.Loading -> {
+                        is State.Loading -> {
                             movieStateLiveData.postLoading()
                             _movieUiStateFlow.value = UiState.Loading()
                         }
-                        is AsyncResource.Success -> {
+                        is State.Success -> {
                             movieStateLiveData.postSuccess(it.value)
                             _movieUiStateFlow.value =
                                 UiState.Success(movieRepository.getUpcomingMovies())

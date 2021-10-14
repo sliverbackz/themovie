@@ -16,7 +16,8 @@ class MovieNetworkDataSource @Inject constructor(
 
     suspend fun getUpcomingMoviesFlow(): Flow<Resource<UpcomingMovieResponse>> {
         return flow {
-            emit(Resource.Loading(isLoading = true))
+            emit(Resource.Start())
+            emit(Resource.Loading())
             emit(getResult { movieService.getUpcomingMovies(1) })
         }
     }

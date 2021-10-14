@@ -56,16 +56,15 @@ class UpcomingMovieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel.getUpcomingMovies()
         viewModel.fetchUpcomingMovies()
         binding.rvMovie.adapter = movieAdapter
-        viewModel.movieLiveData.observe(viewLifecycleOwner) {
-            it?.apply {
-                binding.rvMovie.isVisible = true
-                binding.emptyView.tvEmptyText.isVisible = false
-                movieAdapter.submitList(this)
-            }
-        }
+//        viewModel.movieLiveData.observe(viewLifecycleOwner) {
+//            it?.apply {
+//                binding.rvMovie.isVisible = true
+//                binding.emptyView.tvEmptyText.isVisible = false
+//                movieAdapter.submitList(this)
+//            }
+//        }
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
             snackBar = when (it) {
                 is Error -> {
@@ -83,6 +82,7 @@ class UpcomingMovieFragment : Fragment() {
                     binding.rvMovie.isVisible = true
                     binding.emptyView.tvEmptyText.isVisible = false
                     binding.loadingView.progressBar.isVisible = false
+                    movieAdapter.submitList(it.value)
                     Snackbar.make(binding.root, "Successful loaded", Snackbar.LENGTH_SHORT)
 
                 }
