@@ -1,6 +1,6 @@
 # The Movie
-### The movie app uses the following architechure components;
-#### App architechure (MVVM)
+### The movie app uses the following architecture components;
+#### App architecture (MVVM)
 - Kotlin(Coroutine,Flow)
 - Navigation components
 - Database (Room) 
