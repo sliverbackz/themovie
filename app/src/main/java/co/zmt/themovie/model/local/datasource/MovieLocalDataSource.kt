@@ -1,6 +1,5 @@
 package co.zmt.themovie.model.local.datasource
 
-import androidx.lifecycle.LiveData
 import co.zmt.themovie.model.local.db.movie.MovieWithMovieGenre
 import co.zmt.themovie.model.local.db.movie.dao.FavoriteMovieDao
 import co.zmt.themovie.model.local.db.movie.dao.MovieDao
@@ -19,7 +18,6 @@ class MovieLocalDataSource @Inject constructor(
     private val movieGenreDao: MovieGenreDao,
     private val movieGenreIdDao: MovieGenreIdDao,
     private val favoriteMovieDao: FavoriteMovieDao
-
 ) {
     suspend fun bulkMovieGenreInsert(list: List<MovieGenre>) {
         val flag = movieGenreDao.insert(list)
@@ -40,13 +38,8 @@ class MovieLocalDataSource @Inject constructor(
         return movieGenreDao.getGenreName(id)
     }
 
-    suspend fun getDownloadedMovieGenre(): List<MovieGenre> {
+    suspend fun getAllMovieGenre(): List<MovieGenre> {
         return movieGenreDao.getAllMovieGenre()
-    }
-
-    fun getMovieGenreLiveData(): LiveData<List<MovieGenre>> {
-        Timber.i("getMovieGenreLiveDataDao")
-        return movieGenreDao.getAllMovieGenreLiveData()
     }
 
     fun getMovieGenreFlow(): Flow<List<MovieGenre>> {

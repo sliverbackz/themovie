@@ -13,25 +13,27 @@ import javax.inject.Inject
 class MovieNetworkDataSource @Inject constructor(
     private val movieService: MovieService
 ) : BaseDataSource() {
-
     suspend fun getUpcomingMoviesFlow(): Flow<Resource<UpcomingMovieResponse>> {
         return flow {
             emit(Resource.Start())
             emit(Resource.Loading())
-            emit(getResult { movieService.getUpcomingMovies(1) })
+            emit(getResultOrError { movieService.getUpcomingMovies(1) })
         }
     }
 
-    suspend fun getPopularMovies(): Resource<PopularMovieResponse> {
-        return getResult {
-            movieService.getPopularMovies(1)
+    suspend fun getPopularMovies(): Flow<Resource<PopularMovieResponse>> {
+        return flow {
+            emit(Resource.Start())
+            emit(Resource.Loading())
+            emit(getResultOrError { movieService.getPopularMovies(1) })
         }
-
     }
 
-    suspend fun getMovieGenreList(): Resource<MovieGenreResponse> {
-        return getResult {
-            movieService.getMovieGenreList()
+    suspend fun getMovieGenreList(): Flow<Resource<MovieGenreResponse>> {
+        return flow {
+            emit(Resource.Start())
+            emit(Resource.Loading())
+            emit(getResultOrError { movieService.getMovieGenreList() })
         }
     }
 }

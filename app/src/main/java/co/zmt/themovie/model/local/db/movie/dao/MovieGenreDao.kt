@@ -12,9 +12,6 @@ abstract class MovieGenreDao : BaseDao<MovieGenre> {
     abstract suspend fun getAllMovieGenre(): List<MovieGenre>
 
     @Query("select * from moviegenre")
-    abstract fun getAllMovieGenreLiveData(): LiveData<List<MovieGenre>>
-
-    @Query("select * from moviegenre")
     abstract fun getAllMovieGenreFlow(): Flow<List<MovieGenre>>
 
     @Query("select name from moviegenre where id =:id")

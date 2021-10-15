@@ -5,14 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import co.zmt.themovie.helper.AsyncViewStateLiveData
+import co.zmt.themovie.helper.State
 import co.zmt.themovie.model.local.db.movie.MovieWithMovieGenre
-import co.zmt.themovie.model.local.db.movie.entity.Movie
-import co.zmt.themovie.repository.AsyncResource
 import co.zmt.themovie.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,26 +22,27 @@ class PopularMovieViewModel @Inject constructor(
     val movieLiveData: LiveData<List<MovieWithMovieGenre>?> =
         movieRepository.getPopularMoviesFlow().asLiveData()
 
-    val movieStateLiveData = AsyncViewStateLiveData<List<Movie>?>()
+    val movieStateLiveData = AsyncViewStateLiveData<List<MovieWithMovieGenre>?>()
 
     fun getPopularMovies() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = movieRepository.getPopularMovies()
-            when (result) {
-                is AsyncResource.Error -> {
-                    movieStateLiveData.postError(result.exception, result.errorMessage)
-                    Timber.i(result.errorMessage)
-                    Timber.i("Error")
-                }
-                is AsyncResource.Loading -> {
-                    movieStateLiveData.postLoading()
-                    Timber.i("Loading..")
-                }
-                is AsyncResource.Success -> {
-                    Timber.i("Success")
-                    movieStateLiveData.postSuccess(result.value)
+            movieRepository.fetchPopularMovies().collect {
+                when (it) {
+                    is State.Start -> {
+                        movieStateLiveData.postSuccess(it.value)
+                    }
+                    is State.Error -> {
+                        movieStateLiveData.postError(it.exception, it.errorMessage)
+                    }
+                    is State.Loading -> {
+                        movieStateLiveData.postLoading()
+                    }
+                    is State.Success -> {
+                        movieStateLiveData.postSuccess(it.value)
+                    }
                 }
             }
+
         }
     }
 }

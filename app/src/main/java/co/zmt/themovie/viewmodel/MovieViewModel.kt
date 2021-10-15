@@ -23,7 +23,7 @@ class MovieViewModel @Inject constructor(
     fun getMovieGenres() {
         viewModelScope.launch(Dispatchers.IO) {
             val runCatcher = runCatching {
-                movieRepository.getGenreList()
+                movieRepository.fetchGenreList()
             }
             runCatcher.doWithException {}
         }

@@ -1,8 +1,6 @@
 package co.zmt.themovie.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import co.zmt.themovie.helper.AsyncViewStateLiveData
 import co.zmt.themovie.helper.State
@@ -21,9 +19,6 @@ import javax.inject.Inject
 class UpcomingMovieViewModel @Inject constructor(
     private val movieRepository: MovieRepository
 ) : ViewModel() {
-    val movieLiveData: LiveData<List<MovieWithMovieGenre>?> =
-        movieRepository.getUpcomingMoviesFlow().asLiveData()
-
     val movieStateLiveData = AsyncViewStateLiveData<List<MovieWithMovieGenre>?>()
     private var _movieUiStateFlow =
         MutableStateFlow<UiState<List<MovieWithMovieGenre>?>>(
@@ -55,7 +50,7 @@ class UpcomingMovieViewModel @Inject constructor(
                         is State.Success -> {
                             movieStateLiveData.postSuccess(it.value)
                             _movieUiStateFlow.value =
-                                UiState.Success(movieRepository.getUpcomingMovies())
+                                UiState.Success(it.value)
                         }
                     }
                 }

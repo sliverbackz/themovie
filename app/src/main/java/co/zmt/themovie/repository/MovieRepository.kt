@@ -1,11 +1,9 @@
 package co.zmt.themovie.repository
 
-import androidx.lifecycle.liveData
 import co.zmt.themovie.helper.State
 import co.zmt.themovie.model.local.datasource.MovieLocalDataSource
 import co.zmt.themovie.model.local.db.movie.MovieWithMovieGenre
 import co.zmt.themovie.model.local.db.movie.entity.FavoriteMovie
-import co.zmt.themovie.model.local.db.movie.entity.Movie
 import co.zmt.themovie.model.local.db.movie.entity.MovieGenre
 import co.zmt.themovie.model.local.db.movie.entity.MovieGenreId
 import co.zmt.themovie.model.remote.Resource
@@ -23,52 +21,38 @@ class MovieRepository @Inject constructor(
     private val movieEntityMapper: MovieEntityMapper,
     private val movieGenreEntityMapper: MovieGenreEntityMapper
 ) {
-
-    suspend fun getGenreList(): AsyncResource<List<MovieGenre>?> {
-        when (val response = movieNetworkDataSource.getMovieGenreList()) {
-            is Resource.Success -> {
-                val mappedData = response.data.genres?.map {
-                    movieGenreEntityMapper.map(it)
+    suspend fun fetchGenreList(): Flow<State<List<MovieGenre>?>> {
+        return movieNetworkDataSource.getMovieGenreList().map {
+            when (it) {
+                is Resource.Start -> {
+                    //fetch local data
+                    State.Start(movieLocalDataSource.getAllMovieGenre())
                 }
-                mappedData?.let {
-                    movieLocalDataSource.bulkMovieGenreInsert(it)
+                is Resource.Success -> {
+                    val mappedData = it.data.genres?.map { data ->
+                        movieGenreEntityMapper.map(data)
+                    }
+                    if (mappedData != null) {
+                        movieLocalDataSource.bulkMovieGenreInsert(mappedData)
+                    }
+                    //fetch local data or network
+                    State.Success(movieLocalDataSource.getAllMovieGenre())
                 }
-                return AsyncResource.Success(mappedData)
+                is Resource.Error -> {
+                    State.Error(it.throwable, it.message)
+                }
+                is Resource.Loading -> {
+                    State.Loading()
+                }
             }
-            is Resource.Error -> {
-                return AsyncResource.Error(response.throwable, response.message)
-            }
-            is Resource.Loading -> {
-                return AsyncResource.Loading()
-            }
-            else -> return AsyncResource.Loading()
         }
     }
-
-    fun simple() = liveData {
-        emitSource(movieLocalDataSource.getMovieGenreLiveData())
-    }
-
-    fun getGenreListFlow() = movieLocalDataSource.getMovieGenreFlow()
-
-    fun getMovieDetailFlow(id: Int) = movieLocalDataSource.getMovieDetailFlow(id)
-
-    suspend fun getMovieDetail(id: Int) = movieLocalDataSource.getMovieDetail(id)
-
-    suspend fun getFavoriteMovie(movieId: Int) = movieLocalDataSource.getFavoriteMovie(movieId)
-
-    suspend fun insertFavoriteMovie(favMovie: FavoriteMovie) =
-        movieLocalDataSource.insertFavoriteMovie(favMovie)
-
-    suspend fun updateFavoriteMovie(favMovie: FavoriteMovie) =
-        movieLocalDataSource.updateFavoriteMovie(favMovie)
 
     suspend fun fetchUpcomingMovie(): Flow<State<List<MovieWithMovieGenre>?>> {
         return movieNetworkDataSource.getUpcomingMoviesFlow().map {
             when (it) {
                 is Resource.Start -> {
                     //produce local data
-                    movieLocalDataSource.getMovies()
                     State.Start(movieLocalDataSource.getMovies())
                 }
                 is Resource.Success -> {
@@ -98,42 +82,54 @@ class MovieRepository @Inject constructor(
         }
     }
 
-    fun getUpcomingMoviesFlow() = movieLocalDataSource.getMovieFlow()
+    suspend fun fetchPopularMovies(): Flow<State<List<MovieWithMovieGenre>?>> {
+        return movieNetworkDataSource.getPopularMovies().map {
+            when (it) {
+                is Resource.Start -> {
+                    State.Start(movieLocalDataSource.getMovies())
+                }
+                is Resource.Success -> {
+                    it.data.results
+                        ?.map(movieEntityMapper::map)
+                        ?.apply { movieLocalDataSource.bulkMovieInsert(this) }
 
-    fun getUpcomingMovies() = movieLocalDataSource.getMovies()
+                    it.data.results?.forEach { data ->
+                        data.genreIds?.map { genre ->
+                            Timber.i("${data.id} =>$genre")
+                            MovieGenreId(
+                                movieId = data.id,
+                                genreId = genre,
+                                genreName = movieLocalDataSource.getGenreNameById(genre)
+                            )
+                        }?.apply { movieLocalDataSource.bulkMovieGenreIdInsert(this) }
+
+                    }
+                    //produce local or network data
+                    State.Success(movieLocalDataSource.getMovies())
+                }
+                is Resource.Error -> {
+                    State.Error(it.throwable, it.message)
+                }
+                is Resource.Loading -> {
+                    State.Loading()
+                }
+            }
+        }
+    }
+
+    fun getGenreListFlow() = movieLocalDataSource.getMovieGenreFlow()
+
+    fun getMovieDetailFlow(id: Int) = movieLocalDataSource.getMovieDetailFlow(id)
+
+    suspend fun getMovieDetail(id: Int) = movieLocalDataSource.getMovieDetail(id)
+
+    suspend fun getFavoriteMovie(movieId: Int) = movieLocalDataSource.getFavoriteMovie(movieId)
+
+    suspend fun insertFavoriteMovie(favMovie: FavoriteMovie) =
+        movieLocalDataSource.insertFavoriteMovie(favMovie)
 
     fun getPopularMoviesFlow() = movieLocalDataSource.getMovieFlow()
 
     fun getLikedMovieFlow() = movieLocalDataSource.getLikedMovieFlow()
-
-    suspend fun getPopularMovies(): AsyncResource<List<Movie>?> {
-        when (val response = movieNetworkDataSource.getPopularMovies()) {
-            is Resource.Success -> {
-                val mappedMovieData = response.data.results
-                    ?.map(movieEntityMapper::map)
-                    ?.apply { movieLocalDataSource.bulkMovieInsert(this) }
-
-                response.data.results?.forEach { data ->
-                    data.genreIds?.map {
-                        Timber.i("${data.id} =>$it")
-                        MovieGenreId(
-                            movieId = data.id,
-                            genreId = it,
-                            genreName = movieLocalDataSource.getGenreNameById(it)
-                        )
-                    }?.apply { movieLocalDataSource.bulkMovieGenreIdInsert(this) }
-
-                }
-                return AsyncResource.Success(mappedMovieData)
-            }
-            is Resource.Error -> {
-                return AsyncResource.Error(response.throwable, response.message)
-            }
-            is Resource.Loading -> {
-                return AsyncResource.Loading()
-            }
-            else -> return AsyncResource.Loading()
-        }
-    }
 
 }

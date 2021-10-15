@@ -1,7 +1,6 @@
 package co.zmt.themovie.model.remote
 
 import retrofit2.Response
-import timber.log.Timber
 
 abstract class BaseDataSource {
 
@@ -14,7 +13,7 @@ abstract class BaseDataSource {
         private const val ERROR_CODE_500 = 500
     }
 
-    protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
+    protected suspend fun <T> getResultOrError(call: suspend () -> Response<T>): Resource<T> {
         try {
             val response = call()
             if (response.isSuccessful) {
@@ -22,9 +21,8 @@ abstract class BaseDataSource {
                 if (body != null) return Resource.Success(body)
             }
             return Resource.Error(
-                " ${response.code()} ${response.message()}",
-                Throwable(response.code().toString()),
-                null
+                "${response.code()} ${response.message()}",
+                Throwable(response.code().toString())
             )
         } catch (e: Exception) {
             return error(e.message ?: e.toString())
@@ -32,12 +30,7 @@ abstract class BaseDataSource {
     }
 
     private fun <T> error(message: String): Resource<T> {
-        Timber.d(message)
-        return Resource.Error(
-            "Network call has failed for a following reason: $message",
-            Throwable(message),
-            null
-        )
+        return Resource.Error(message, Throwable(message))
     }
 
 }
