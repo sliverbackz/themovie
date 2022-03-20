@@ -31,7 +31,6 @@ class MovieLocalDataSource @Inject constructor(
 
     suspend fun bulkMovieGenreIdInsert(list: List<MovieGenreId>) {
         val flag = movieGenreIdDao.insert(list)
-        Timber.i("${flag.size} ${flag[0]}")
     }
 
     suspend fun getGenreNameById(id: Int): String {
