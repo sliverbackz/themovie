@@ -14,6 +14,7 @@ import co.zmt.themovie.databinding.FragmentMovieDetailBinding
 import co.zmt.themovie.helper.Api
 import co.zmt.themovie.helper.loadFromUrl
 import co.zmt.themovie.viewmodel.MovieDetailViewModel
+import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -61,7 +62,7 @@ class MovieDetailFragment : Fragment() {
                 lifecycleScope.launch {
                     val favMovie = viewModel.getFavoriteMovie(data?.movie!!.movieId)
                     favMovie?.apply {
-                        viewModel.insertFavoriteMovie(data,  !favMovie.isFavorite)
+                        viewModel.insertFavoriteMovie(data, !favMovie.isFavorite)
                     }
                     if (favMovie == null) {
                         viewModel.insertFavoriteMovie(data, true)
@@ -70,6 +71,19 @@ class MovieDetailFragment : Fragment() {
             }
         }
 
+
+        viewModel.getGenreNamesLiveData(args.movieId).observe(viewLifecycleOwner) {
+            if (it.isEmpty()) {
+                binding.detailBodyTags.visibility = View.GONE
+            } else {
+                binding.detailBodyTags.visibility = View.VISIBLE
+            }
+            for (name in it) {
+                binding.detailBodyTags.addView(Chip(requireContext()).apply {
+                    text = name
+                })
+            }
+        }
     }
 
 }
