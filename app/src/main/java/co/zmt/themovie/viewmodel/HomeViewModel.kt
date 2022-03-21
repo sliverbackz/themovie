@@ -1,8 +1,6 @@
 package co.zmt.themovie.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import co.zmt.themovie.helper.AsyncViewStateLiveData
 import co.zmt.themovie.helper.State

@@ -1,6 +1,5 @@
 package co.zmt.themovie.model.local.db.movie.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import co.zmt.themovie.model.local.db.movie.entity.MovieGenre

@@ -72,7 +72,7 @@ class PopularMovieFragment : Fragment() {
                     binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Empty Movie"
 
-                    Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_SHORT)
                         .setAction(R.string.lbl_load_again) {
                             viewModel.getPopularMovies()
                             snackBar.dismiss()
@@ -91,7 +91,7 @@ class PopularMovieFragment : Fragment() {
                     Snackbar.make(binding.root, "Loading..", Snackbar.LENGTH_SHORT)
                 }
             }
-            snackBar.show()
+           // snackBar.show()
             if(movieAdapter.itemCount > 0){
                 snackBar.dismiss()
             }

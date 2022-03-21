@@ -10,7 +10,6 @@ import co.zmt.themovie.model.local.db.movie.entity.Movie
 import co.zmt.themovie.model.local.db.movie.entity.MovieGenre
 import co.zmt.themovie.model.local.db.movie.entity.MovieGenreId
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
 import javax.inject.Inject
 
 class MovieLocalDataSource @Inject constructor(
@@ -19,37 +18,15 @@ class MovieLocalDataSource @Inject constructor(
     private val movieGenreIdDao: MovieGenreIdDao,
     private val favoriteMovieDao: FavoriteMovieDao
 ) {
-    suspend fun bulkMovieGenreInsert(list: List<MovieGenre>) {
-        val flag = movieGenreDao.insert(list)
-        Timber.i("${flag.size} ${flag[0]}")
-    }
-
     suspend fun bulkMovieInsert(list: List<Movie>) {
-        val flag = movieDao.insert(list)
-        Timber.i("${flag.size} ${flag[0]}")
-    }
-
-    suspend fun bulkMovieGenreIdInsert(list: List<MovieGenreId>) {
-        val flag = movieGenreIdDao.insert(list)
-    }
-
-    suspend fun getGenreNameById(id: Int): String {
-        return movieGenreDao.getGenreName(id)
-    }
-
-    suspend fun getAllMovieGenre(): List<MovieGenre> {
-        return movieGenreDao.getAllMovieGenre()
-    }
-
-    fun getMovieGenreFlow(): Flow<List<MovieGenre>> {
-        return movieGenreDao.getAllMovieGenreFlow()
+        movieDao.insert(list)
     }
 
     fun getMovieFlow(): Flow<List<MovieWithMovieGenre>?> {
         return movieDao.getAllMoviesFlow()
     }
 
-    fun getMovies(): List<MovieWithMovieGenre>?{
+    fun getMovies(): List<MovieWithMovieGenre>? {
         return movieDao.getAllMovies()
     }
 
@@ -67,12 +44,32 @@ class MovieLocalDataSource @Inject constructor(
         favoriteMovieDao.insert(favMovie)
     }
 
-    suspend fun updateFavoriteMovie(favMovie: FavoriteMovie) {
-        favoriteMovieDao.update(favMovie)
-    }
-
     suspend fun getMovieDetail(id: Int): MovieWithMovieGenre? {
         return movieDao.getMovieById(id)
     }
 
+    // Movie genre
+    suspend fun bulkMovieGenreInsert(list: List<MovieGenre>) {
+        movieGenreDao.insert(list)
+    }
+
+    suspend fun bulkMovieGenreIdInsert(list: List<MovieGenreId>) {
+        movieGenreIdDao.insert(list)
+    }
+
+    fun getGenreNameById(id: Int): String {
+        return movieGenreDao.getGenreName(id)
+    }
+
+    suspend fun getAllMovieGenre(): List<MovieGenre> {
+        return movieGenreDao.getAllMovieGenre()
+    }
+
+    fun getMovieGenreFlow(): Flow<List<MovieGenre>> {
+        return movieGenreDao.getAllMovieGenreFlow()
+    }
+
+    fun getGenreNameListByMovieId(movieId: Int): Flow<List<String>> {
+        return movieGenreIdDao.getMovieGenreNameListByMovieId(movieId)
+    }
 }
