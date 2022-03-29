@@ -119,14 +119,15 @@ class MovieRepository @Inject constructor(
 
     fun getGenreListFlow() = movieLocalDataSource.getMovieGenreFlow()
 
+    fun getMovieGenreNameListByMovieId(id: Int) = movieLocalDataSource.getGenreNameListByMovieId(id)
+
     fun getMovieDetailFlow(id: Int) = movieLocalDataSource.getMovieDetailFlow(id)
 
     suspend fun getMovieDetail(id: Int) = movieLocalDataSource.getMovieDetail(id)
 
     suspend fun getFavoriteMovie(movieId: Int) = movieLocalDataSource.getFavoriteMovie(movieId)
 
-    suspend fun insertFavoriteMovie(favMovie: FavoriteMovie) =
-        movieLocalDataSource.insertFavoriteMovie(favMovie)
+    suspend fun insertFavoriteMovie(favMovie: FavoriteMovie) = movieLocalDataSource.insertFavoriteMovie(favMovie)
 
     fun getPopularMoviesFlow() = movieLocalDataSource.getMovieFlow()
 

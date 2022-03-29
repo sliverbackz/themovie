@@ -58,13 +58,6 @@ class UpcomingMovieFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.fetchUpcomingMovies()
         binding.rvMovie.adapter = movieAdapter
-//        viewModel.movieLiveData.observe(viewLifecycleOwner) {
-//            it?.apply {
-//                binding.rvMovie.isVisible = true
-//                binding.emptyView.tvEmptyText.isVisible = false
-//                movieAdapter.submitList(this)
-//            }
-//        }
         viewModel.movieStateLiveData.observe(viewLifecycleOwner) {
             snackBar = when (it) {
                 is Error -> {
@@ -73,7 +66,7 @@ class UpcomingMovieFragment : Fragment() {
                     binding.emptyView.tvEmptyText.isVisible = !show
                     binding.emptyView.tvEmptyText.text = "Empty Movie"
                     binding.loadingView.progressBar.isVisible = false
-                    Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(binding.root, it.errorMessage, Snackbar.LENGTH_SHORT)
                         .setAction(string.lbl_load_again) {
                             viewModel.fetchUpcomingMovies()
                         }
@@ -95,7 +88,7 @@ class UpcomingMovieFragment : Fragment() {
                     Snackbar.make(binding.root, "Loading..", Snackbar.LENGTH_SHORT)
                 }
             }
-            snackBar.show()
+           // snackBar.show()
             if (movieAdapter.itemCount > 0) {
                 snackBar.dismiss()
             }
