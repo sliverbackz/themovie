@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import co.zmt.themovie.R
 import co.zmt.themovie.databinding.FragmentMovieDetailBinding
+import co.zmt.themovie.extension.gone
+import co.zmt.themovie.extension.show
 import co.zmt.themovie.helper.Api
 import co.zmt.themovie.helper.loadFromUrl
 import co.zmt.themovie.viewmodel.MovieDetailViewModel
@@ -74,9 +76,9 @@ class MovieDetailFragment : Fragment() {
 
         viewModel.getGenreNamesLiveData(args.movieId).observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
-                binding.detailBodyTags.visibility = View.GONE
+                binding.detailBodyTags.gone()
             } else {
-                binding.detailBodyTags.visibility = View.VISIBLE
+                binding.detailBodyTags.show()
             }
             for (name in it) {
                 binding.detailBodyTags.addView(Chip(requireContext()).apply {
